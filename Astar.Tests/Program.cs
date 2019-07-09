@@ -6,10 +6,10 @@ using Tapas;
 
 namespace Astar.Tests
 {
-    public class Test_assert_equal
+    public class TestPathfinding
     {
         [Test]
-        public void Equal()
+        public void No_obstacles()
         {
             int sizeX = 16;
             int sizeY = 16;
@@ -38,29 +38,75 @@ namespace Astar.Tests
                 "____________#___\n" +
                 "_____________#__\n" +
                 "______________#_\n" +
-                "_______________#";
+                "_______________E";
 
-            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path);
+            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, grid);
 
             Assert.Equal(expected, result);
         }
 
-        string MapToString(int sizeX, int sizeY, int startX, int startY, int endX, int endY, List<Node> nodes)
+        [Test]
+        public void Obstacle()
+        {
+            int sizeX = 11;
+            int sizeY = 6;
+            int startX = 7;
+            int startY = 4;
+            int endX = 4;
+            int endY = 1;
+
+            var grid = new Grid(sizeX, sizeY);
+
+            grid.GetNode(3, 1).walkable = false;
+            grid.GetNode(3, 2).walkable = false;
+            grid.GetNode(4, 2).walkable = false;
+            grid.GetNode(5, 2).walkable = false;
+            grid.GetNode(6, 2).walkable = false;
+            grid.GetNode(7, 2).walkable = false;
+
+            var pathfinding = new Pathfinding();
+            var path = pathfinding.FindPath(startX, startY, endX, endY, grid);
+
+            string expected =
+                "___________\n" +
+                "___oE###___\n" +
+                "___ooooo#__\n" +
+                "_______#___\n" +
+                "_______S___\n" +
+                "___________";
+
+            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, grid);
+
+            Assert.Equal(expected, result);
+        }
+
+        string MapToString(int sizeX, int sizeY, int startX, int startY, int endX, int endY, List<Node> nodes, Grid grid)
         {
             StringBuilder[] map = new StringBuilder[sizeY];
 
             for (int i = 0; i < sizeY; i++)
             {
-                map[i] = new StringBuilder(new String('_', sizeY));
+                map[i] = new StringBuilder(new String('_', sizeX));
             }
 
-            map[startY][startX] = 'S';
-            map[endY][endX] = 'E';
+            for (int x = 0; x < sizeX; x++)
+            {
+                for (int y = 0; y < sizeY; y++)
+                {
+                    if (!grid.GetNode(x, y).walkable)
+                    {
+                        map[y][x] = 'o';
+                    }
+                }
+            }
 
             foreach (var node in nodes)
             {
                 map[node.gridY][node.gridX] = '#';
             }
+
+            map[startY][startX] = 'S';
+            map[endY][endX] = 'E';
 
             return String.Join("\n", map.Select(sb => sb.ToString()));
         }
@@ -71,7 +117,7 @@ namespace Astar.Tests
         public static void Main(string[] args)
         {
             TapasRunner.Create(args)
-              .AddTest<Test_assert_equal>()
+              .AddTest<TestPathfinding>()
               .Run();
         }
     }
