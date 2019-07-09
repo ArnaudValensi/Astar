@@ -1,54 +1,88 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 
 namespace Astar
 {
-    public class Grid
+    public struct Vector2Int
     {
-        Node[,] nodes;
+        public int x;
+        public int y;
+
+        public Vector2Int(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public static class MapUtils
+    {
+        public static int CoordsToIndex(int x, int y, int sizeX)
+        {
+            return y * sizeX + x;
+        }
+
+        public static Vector2Int IndexToCoords(int index, int sizeX)
+        {
+            return new Vector2Int(index % sizeX, index / sizeX);
+        }
+    }
+    
+    public class PathMapLayer
+    {
+        bool[] isWalkable;
         int sizeX;
         int sizeY;
+        int size;
 
-        public Grid(int sizeX, int sizeY)
+        public PathMapLayer(int sizeX, int sizeY)
         {
             this.sizeX = sizeX;
             this.sizeY = sizeY;
 
-            nodes = new Node[sizeX, sizeY];
+            size = sizeX * sizeY;
 
-            for (int x = 0; x < sizeX; x++)
+            isWalkable = new bool[size];
+
+            for (int i = 0; i < size; i++)
             {
-                for (int y = 0; y < sizeY; y++)
-                {
-                    nodes[x, y] = new Node(true, x, y);
-                }
+                isWalkable[i] = true;
             }
         }
 
-
-        public Node GetNode(int x, int y)
+        public void SetWalkable(int x, int y, bool walkable)
         {
-            return nodes[x, y];
+            isWalkable[MapUtils.CoordsToIndex(x, y, sizeX)] = walkable;
         }
 
-        public List<Node> GetNeighbours(Node node)
+        public bool IsWalkable(int x, int y)
         {
-            List<Node> neighbours = new List<Node>();
+            return isWalkable[MapUtils.CoordsToIndex(x, y, sizeX)];
+        }
 
-            for (int x = -1; x <= 1; x++)
+        public List<int> GetWalkableNeighbours(int cellIndex)
+        {
+            List<int> neighbours = new List<int>(8);
+            Vector2Int cellCoords = MapUtils.IndexToCoords(cellIndex, sizeX);
+
+            for (int i = -1; i <= 1; i++)
             {
-                for (int y = -1; y <= 1; y++)
+                for (int j = -1; j <= 1; j++)
                 {
-                    if (x == 0 && y == 0)
+                    if (i == 0 && j == 0)
                         continue;
 
-                    int checkX = node.gridX + x;
-                    int checkY = node.gridY + y;
+                    int checkX = cellCoords.x + i;
+                    int checkY = cellCoords.y + j;
 
                     if (checkX >= 0 && checkX < sizeX && checkY >= 0 && checkY < sizeY)
                     {
-                        neighbours.Add(nodes[checkX, checkY]);
+                        int neighbourIndex = MapUtils.CoordsToIndex(checkX, checkY, sizeX);
+
+                        if (isWalkable[neighbourIndex])
+                        {
+                            neighbours.Add(neighbourIndex);
+                        }
                     }
                 }
             }
@@ -57,21 +91,21 @@ namespace Astar
         }
     }
 
-    public class Node
+    public struct Node
     {
-        public bool walkable;
-        public int gridX;
-        public int gridY;
+        public int index;
 
         public int gCost;
         public int hCost;
-        public Node parent;
+        public int parentIndex;
 
-        public Node(bool _walkable, int _gridX, int _gridY)
+        public Node(int index)
         {
-            walkable = _walkable;
-            gridX = _gridX;
-            gridY = _gridY;
+            this.index = index;
+            
+            gCost = 0;
+            hCost = 0;
+            parentIndex = 0;
         }
 
         public int fCost
@@ -85,51 +119,89 @@ namespace Astar
 
     public class Pathfinding
     {
-        public List<Node> FindPath(int startX, int startY, int targetX, int targetY, Grid grid)
-        {
-            Node startNode = grid.GetNode(startX, startY);
-            Node targetNode = grid.GetNode(targetX, targetY);
+        Node[] nodes;
+        int mapSizeX;
+        int mapSize;
 
-            List<Node> openSet = new List<Node>();
-            HashSet<Node> closedSet = new HashSet<Node>();
+        public Pathfinding(int sizeX, int sizeY)
+        {
+            mapSizeX = sizeX;
+            mapSize = sizeX * sizeY;
+            nodes = new Node[mapSize];
+
+            for (int i = 0; i < mapSize; i++)
+            {
+                nodes[i] = new Node(i);
+            }
+        }
+
+        int CoordsToIndex(int x, int y)
+        {
+            return MapUtils.CoordsToIndex(x, y, mapSizeX);
+        }
+        
+        public Vector2Int IndexToCoords(int index)
+        {
+            return new Vector2Int(index % mapSizeX, index / mapSizeX);
+        }
+        
+        public List<int> FindPath(int startX, int startY, int targetX, int targetY, PathMapLayer pathMapLayer)
+        {
+            int startNode = CoordsToIndex(startX, startY);
+            int targetNode = CoordsToIndex(targetX, targetY);
+
+            // TODO: Just clear.
+            List<int> openSet = new List<int>();
+            HashSet<int> closedSet = new HashSet<int>();
             openSet.Add(startNode);
 
             while (openSet.Count > 0)
             {
-                Node node = openSet[0];
+                // Get the cheapest open node.
+                int nodeIndex = openSet[0];
+                Node node = nodes[nodeIndex];
                 for (int i = 1; i < openSet.Count; i++)
                 {
-                    if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost)
+                    Node currentOpenNode = nodes[openSet[i]];
+                    if (currentOpenNode.fCost < node.fCost || currentOpenNode.fCost == node.fCost)
                     {
-                        if (openSet[i].hCost < node.hCost)
-                            node = openSet[i];
+                        if (currentOpenNode.hCost < node.hCost)
+                        {
+                            nodeIndex = currentOpenNode.index;
+                            node = nodes[nodeIndex];
+                        }
                     }
                 }
 
-                openSet.Remove(node);
-                closedSet.Add(node);
+                openSet.Remove(nodeIndex);
+                closedSet.Add(nodeIndex);
 
-                if (node == targetNode)
+                if (nodeIndex == targetNode)
                 {
                     return RetracePath(startNode, targetNode);
                 }
 
-                foreach (Node neighbour in grid.GetNeighbours(node))
+                // TODO: Does a call to iterator called multiple time in foreach.
+                var neighbours = pathMapLayer.GetWalkableNeighbours(nodeIndex);
+                foreach (int neighbourIndex in neighbours)
                 {
-                    if (!neighbour.walkable || closedSet.Contains(neighbour))
+                    Node neighbour = nodes[neighbourIndex];
+                    
+                    if (closedSet.Contains(neighbourIndex))
                     {
                         continue;
                     }
 
-                    int newCostToNeighbour = node.gCost + GetDistance(node, neighbour);
-                    if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                    int newCostToNeighbour = node.gCost + GetCostBetweenNodes(nodeIndex, neighbourIndex);
+                    if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbourIndex))
                     {
                         neighbour.gCost = newCostToNeighbour;
-                        neighbour.hCost = GetDistance(neighbour, targetNode);
-                        neighbour.parent = node;
+                        neighbour.hCost = GetCostBetweenNodes(neighbourIndex, targetNode);
+                        neighbour.parentIndex = nodeIndex;
+                        nodes[neighbourIndex] = neighbour;
 
-                        if (!openSet.Contains(neighbour))
-                            openSet.Add(neighbour);
+                        if (!openSet.Contains(neighbourIndex))
+                            openSet.Add(neighbourIndex);
                     }
                 }
             }
@@ -137,15 +209,15 @@ namespace Astar
             return null;
         }
 
-        List<Node> RetracePath(Node startNode, Node endNode)
+        List<int> RetracePath(int startNode, int endNode)
         {
-            List<Node> path = new List<Node>();
-            Node currentNode = endNode;
+            List<int> path = new List<int>();
+            int currentNode = endNode;
 
             while (currentNode != startNode)
             {
                 path.Add(currentNode);
-                currentNode = currentNode.parent;
+                currentNode = nodes[currentNode].parentIndex;
             }
             path.Reverse();
 
@@ -153,26 +225,17 @@ namespace Astar
 
         }
 
-        int GetDistance(Node nodeA, Node nodeB)
+        // TODO: This should end up in PathMapLayer.
+        int GetCostBetweenNodes(int nodeA, int nodeB)
         {
-            int dstX = Math.Abs(nodeA.gridX - nodeB.gridX);
-            int dstY = Math.Abs(nodeA.gridY - nodeB.gridY);
+            Vector2Int positionA = IndexToCoords(nodeA);
+            Vector2Int positionB = IndexToCoords(nodeB);
+            int dstX = Math.Abs(positionA.x - positionB.x);
+            int dstY = Math.Abs(positionA.y - positionB.y);
 
             if (dstX > dstY)
                 return 14 * dstY + 10 * (dstX - dstY);
             return 14 * dstX + 10 * (dstY - dstX);
         }
     }
-
-    //internal struct CostNode
-    //{
-    //    public int index;
-    //    public int cost;
-
-    //    public CostNode(int index, int cost)
-    //    {
-    //        this.index = index;
-    //        this.cost = cost;
-    //    }
-    //}
 }

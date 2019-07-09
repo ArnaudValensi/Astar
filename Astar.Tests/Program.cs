@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Tapas;
 
 namespace Astar.Tests
@@ -18,9 +19,9 @@ namespace Astar.Tests
             int endX = sizeX - 1;
             int endY = sizeY - 1;
 
-            var grid = new Grid(sizeX, sizeY);
-            var pathfinding = new Pathfinding();
-            var path = pathfinding.FindPath(startX, startY, endX, endY, grid);
+            var pathMapLayer = new PathMapLayer(sizeX, sizeY);
+            var pathfinding = new Pathfinding(sizeX, sizeY);
+            var path = pathfinding.FindPath(startX, startY, endX, endY, pathMapLayer);
 
             string expected =
                 "S_______________\n" +
@@ -40,7 +41,7 @@ namespace Astar.Tests
                 "______________#_\n" +
                 "_______________E";
 
-            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, grid);
+            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, pathMapLayer);
 
             Assert.Equal(expected, result);
         }
@@ -55,17 +56,17 @@ namespace Astar.Tests
             int endX = 4;
             int endY = 1;
 
-            var grid = new Grid(sizeX, sizeY);
+            var pathMapLayer = new PathMapLayer(sizeX, sizeY);
 
-            grid.GetNode(3, 1).walkable = false;
-            grid.GetNode(3, 2).walkable = false;
-            grid.GetNode(4, 2).walkable = false;
-            grid.GetNode(5, 2).walkable = false;
-            grid.GetNode(6, 2).walkable = false;
-            grid.GetNode(7, 2).walkable = false;
+            pathMapLayer.SetWalkable(3, 1, false);
+            pathMapLayer.SetWalkable(3, 2, false);
+            pathMapLayer.SetWalkable(4, 2, false);
+            pathMapLayer.SetWalkable(5, 2, false);
+            pathMapLayer.SetWalkable(6, 2, false);
+            pathMapLayer.SetWalkable(7, 2, false);
 
-            var pathfinding = new Pathfinding();
-            var path = pathfinding.FindPath(startX, startY, endX, endY, grid);
+            var pathfinding = new Pathfinding(sizeX, sizeY);
+            var path = pathfinding.FindPath(startX, startY, endX, endY, pathMapLayer);
 
             string expected =
                 "___________\n" +
@@ -75,7 +76,7 @@ namespace Astar.Tests
                 "_______S___\n" +
                 "___________";
 
-            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, grid);
+            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, pathMapLayer);
 
             Assert.Equal(expected, result);
         }
@@ -90,14 +91,14 @@ namespace Astar.Tests
             int endX = 6;
             int endY = 1;
 
-            var grid = new Grid(sizeX, sizeY);
+            var pathMapLayer = new PathMapLayer(sizeX, sizeY);
 
-            grid.GetNode(3, 1).walkable = false;
-            grid.GetNode(4, 1).walkable = false;
-            grid.GetNode(4, 2).walkable = false;
+            pathMapLayer.SetWalkable(3, 1, false);
+            pathMapLayer.SetWalkable(4, 1, false);
+            pathMapLayer.SetWalkable(4, 2, false);
 
-            var pathfinding = new Pathfinding();
-            var path = pathfinding.FindPath(startX, startY, endX, endY, grid);
+            var pathfinding = new Pathfinding(sizeX, sizeY);
+            var path = pathfinding.FindPath(startX, startY, endX, endY, pathMapLayer);
 
             string expected =
                 "_______\n" +
@@ -105,7 +106,7 @@ namespace Astar.Tests
                 "____o#_\n" +
                 "S####__";
 
-            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, grid);
+            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, pathMapLayer);
 
             Assert.Equal(expected, result);
         }
@@ -120,17 +121,17 @@ namespace Astar.Tests
             int endX = 4;
             int endY = 0;
 
-            var grid = new Grid(sizeX, sizeY);
+            var pathMapLayer = new PathMapLayer(sizeX, sizeY);
 
-            grid.GetNode(2, 0).walkable = false;
+            pathMapLayer.SetWalkable(2, 0, false);
 
-            var pathfinding = new Pathfinding();
-            var path = pathfinding.FindPath(startX, startY, endX, endY, grid);
+            var pathfinding = new Pathfinding(sizeX, sizeY);
+            var path = pathfinding.FindPath(startX, startY, endX, endY, pathMapLayer);
 
             Assert.Equal(null, path);
         }
 
-        string MapToString(int sizeX, int sizeY, int startX, int startY, int endX, int endY, List<Node> nodes, Grid grid)
+        string MapToString(int sizeX, int sizeY, int startX, int startY, int endX, int endY, List<int> cellIndexes, PathMapLayer pathMapLayer)
         {
             StringBuilder[] map = new StringBuilder[sizeY];
 
@@ -143,16 +144,18 @@ namespace Astar.Tests
             {
                 for (int y = 0; y < sizeY; y++)
                 {
-                    if (!grid.GetNode(x, y).walkable)
+                    if (!pathMapLayer.IsWalkable(x, y))
                     {
                         map[y][x] = 'o';
                     }
                 }
             }
 
-            foreach (var node in nodes)
+            foreach (var cellIndexe in cellIndexes)
             {
-                map[node.gridY][node.gridX] = '#';
+                Vector2Int position = MapUtils.IndexToCoords(cellIndexe, sizeX);
+
+                map[position.y][position.x] = '#';
             }
 
             map[startY][startX] = 'S';
