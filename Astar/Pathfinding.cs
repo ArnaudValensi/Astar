@@ -4,56 +4,101 @@ using Microsoft.Xna.Framework;
 
 namespace Astar
 {
+    public class Grid
+    {
+        Node[,] nodes;
+        int sizeX;
+        int sizeY;
+
+        public Grid(int sizeX, int sizeY)
+        {
+            this.sizeX = sizeX;
+            this.sizeY = sizeY;
+
+            nodes = new Node[sizeX, sizeY];
+        }
+
+
+        public Node GetNode(int x, int y)
+        {
+            return nodes[x, y];
+        }
+
+        public List<Node> GetNeighbours(Node node)
+        {
+            List<Node> neighbours = new List<Node>();
+
+            for (int x = -1; x <= 1; x++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    if (x == 0 && y == 0)
+                        continue;
+
+                    int checkX = node.gridX + x;
+                    int checkY = node.gridY + y;
+
+                    if (checkX >= 0 && checkX < sizeX && checkY >= 0 && checkY < sizeY)
+                    {
+                        neighbours.Add(nodes[checkX, checkY]);
+                    }
+                }
+            }
+
+            return neighbours;
+        }
+    }
+
     public class Pathfinding
     {
-        public List<Node> FindPath(Vector2 startPos, Vector2 targetPos)
+        public List<Node> FindPath(int startX, int startY, int targetX, int targetY, Grid grid)
         {
-            //Node startNode = grid.NodeFromWorldPoint(startPos);
-            //Node targetNode = grid.NodeFromWorldPoint(targetPos);
+            Node startNode = grid.GetNode(startX, startY);
+            Node targetNode = grid.GetNode(targetX, targetY);
 
-            //List<Node> openSet = new List<Node>();
-            //HashSet<Node> closedSet = new HashSet<Node>();
-            //openSet.Add(startNode);
+            List<Node> openSet = new List<Node>();
+            HashSet<Node> closedSet = new HashSet<Node>();
+            openSet.Add(startNode);
 
-            //while (openSet.Count > 0)
-            //{
-            //    Node node = openSet[0];
-            //    for (int i = 1; i < openSet.Count; i++)
-            //    {
-            //        if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost)
-            //        {
-            //            if (openSet[i].hCost < node.hCost)
-            //                node = openSet[i];
-            //        }
-            //    }
+            while (openSet.Count > 0)
+            {
+                Node node = openSet[0];
+                for (int i = 1; i < openSet.Count; i++)
+                {
+                    if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost)
+                    {
+                        if (openSet[i].hCost < node.hCost)
+                            node = openSet[i];
+                    }
+                }
 
-            //    openSet.Remove(node);
-            //    closedSet.Add(node);
+                openSet.Remove(node);
+                closedSet.Add(node);
 
-            //    if (node == targetNode)
-            //    {
-            //        return RetracePath(startNode, targetNode);
-            //    }
+                if (node == targetNode)
+                {
+                    return RetracePath(startNode, targetNode);
+                }
 
-            //    foreach (Node neighbour in grid.GetNeighbours(node))
-            //    {
-            //        if (!neighbour.walkable || closedSet.Contains(neighbour))
-            //        {
-            //            continue;
-            //        }
+                foreach (Node neighbour in grid.GetNeighbours(node))
+                {
+                    if (!neighbour.walkable || closedSet.Contains(neighbour))
+                    {
+                        continue;
+                    }
 
-            //        int newCostToNeighbour = node.gCost + GetDistance(node, neighbour);
-            //        if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
-            //        {
-            //            neighbour.gCost = newCostToNeighbour;
-            //            neighbour.hCost = GetDistance(neighbour, targetNode);
-            //            neighbour.parent = node;
+                    int newCostToNeighbour = node.gCost + GetDistance(node, neighbour);
+                    if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                    {
+                        neighbour.gCost = newCostToNeighbour;
+                        neighbour.hCost = GetDistance(neighbour, targetNode);
+                        neighbour.parent = node;
 
-            //            if (!openSet.Contains(neighbour))
-            //                openSet.Add(neighbour);
-            //        }
-            //    }
-            //}
+                        if (!openSet.Contains(neighbour))
+                            openSet.Add(neighbour);
+                    }
+                }
+            }
 
             return null;
         }
@@ -88,7 +133,6 @@ namespace Astar
     public class Node
     {
         public bool walkable;
-        public Vector3 worldPosition;
         public int gridX;
         public int gridY;
 
@@ -99,7 +143,6 @@ namespace Astar
         public Node(bool _walkable, Vector3 _worldPos, int _gridX, int _gridY)
         {
             walkable = _walkable;
-            worldPosition = _worldPos;
             gridX = _gridX;
             gridY = _gridY;
         }

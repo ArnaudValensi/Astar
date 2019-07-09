@@ -4,7 +4,7 @@ build:
 	@msbuild /p:Configuration=Debug /nologo /verbosity:quiet /property:GenerateFullPaths=true Astar.sln
 
 test-watch:
-	@ag -l | entr -s 'make test-raw | tap-notify | faucet'
+	@ag -l | entr -s 'make build && make test-raw | tap-notify | faucet'
 
 test-vim:
 	@make test-raw | tap-min
