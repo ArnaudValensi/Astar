@@ -20,7 +20,7 @@ namespace Astar.Tests
             int endY = sizeY - 1;
 
             var pathMapLayer = new PathMapLayer(sizeX, sizeY);
-            var pathfinding = new Pathfinding(sizeX, sizeY);
+            var pathfinding = new PathFinding(sizeX, sizeY);
             var path = pathfinding.FindPath(startX, startY, endX, endY, pathMapLayer);
 
             string expected =
@@ -65,7 +65,7 @@ namespace Astar.Tests
             pathMapLayer.SetWalkable(6, 2, false);
             pathMapLayer.SetWalkable(7, 2, false);
 
-            var pathfinding = new Pathfinding(sizeX, sizeY);
+            var pathfinding = new PathFinding(sizeX, sizeY);
             var path = pathfinding.FindPath(startX, startY, endX, endY, pathMapLayer);
 
             string expected =
@@ -97,7 +97,7 @@ namespace Astar.Tests
             pathMapLayer.SetWalkable(4, 1, false);
             pathMapLayer.SetWalkable(4, 2, false);
 
-            var pathfinding = new Pathfinding(sizeX, sizeY);
+            var pathfinding = new PathFinding(sizeX, sizeY);
             var path = pathfinding.FindPath(startX, startY, endX, endY, pathMapLayer);
 
             string expected =
@@ -125,7 +125,7 @@ namespace Astar.Tests
 
             pathMapLayer.SetWalkable(2, 0, false);
 
-            var pathfinding = new Pathfinding(sizeX, sizeY);
+            var pathfinding = new PathFinding(sizeX, sizeY);
             var path = pathfinding.FindPath(startX, startY, endX, endY, pathMapLayer);
 
             Assert.Equal(null, path);
@@ -155,7 +155,7 @@ namespace Astar.Tests
             {
                 Vector2Int position = MapUtils.IndexToCoords(cellIndexe, sizeX);
 
-                map[position.y][position.x] = '#';
+                map[position.Y][position.X] = '#';
             }
 
             map[startY][startX] = 'S';

@@ -5,13 +5,13 @@ namespace Astar
 {
     public struct Vector2Int
     {
-        public int x;
-        public int y;
+        public readonly int X;
+        public readonly int Y;
 
         public Vector2Int(int x, int y)
         {
-            this.x = x;
-            this.y = y;
+            X = x;
+            Y = y;
         }
     }
 
@@ -30,10 +30,10 @@ namespace Astar
     
     public class PathMapLayer
     {
-        bool[] isWalkable;
-        int sizeX;
-        int sizeY;
-        int size;
+        readonly bool[] isWalkable;
+        readonly int sizeX;
+        readonly int sizeY;
+        readonly int size;
 
         public PathMapLayer(int sizeX, int sizeY)
         {
@@ -72,8 +72,8 @@ namespace Astar
                     if (i == 0 && j == 0)
                         continue;
 
-                    int checkX = cellCoords.x + i;
-                    int checkY = cellCoords.y + j;
+                    int checkX = cellCoords.X + i;
+                    int checkY = cellCoords.Y + j;
 
                     if (checkX >= 0 && checkX < sizeX && checkY >= 0 && checkY < sizeY)
                     {
@@ -93,40 +93,33 @@ namespace Astar
 
     public struct Node
     {
-        public int index;
+        public readonly int Index;
+        public int ParentIndex;
 
-        public int gCost;
-        public int hCost;
-        public int parentIndex;
+        public int GCost;
+        public int HCost;
 
         public Node(int index)
         {
-            this.index = index;
-            
-            gCost = 0;
-            hCost = 0;
-            parentIndex = 0;
+            this.Index = index;
+            ParentIndex = 0;
+
+            GCost = 0;
+            HCost = 0;
         }
 
-        public int fCost
-        {
-            get
-            {
-                return gCost + hCost;
-            }
-        }
+        public int FCost => GCost + HCost;
     }
 
-    public class Pathfinding
+    public class PathFinding
     {
-        Node[] nodes;
-        int mapSizeX;
-        int mapSize;
+        readonly Node[] nodes;
+        readonly int mapSizeX;
 
-        public Pathfinding(int sizeX, int sizeY)
+        public PathFinding(int sizeX, int sizeY)
         {
             mapSizeX = sizeX;
-            mapSize = sizeX * sizeY;
+            int mapSize = sizeX * sizeY;
             nodes = new Node[mapSize];
 
             for (int i = 0; i < mapSize; i++)
@@ -139,8 +132,8 @@ namespace Astar
         {
             return MapUtils.CoordsToIndex(x, y, mapSizeX);
         }
-        
-        public Vector2Int IndexToCoords(int index)
+
+        Vector2Int IndexToCoords(int index)
         {
             return new Vector2Int(index % mapSizeX, index / mapSizeX);
         }
@@ -163,11 +156,11 @@ namespace Astar
                 for (int i = 1; i < openSet.Count; i++)
                 {
                     Node currentOpenNode = nodes[openSet[i]];
-                    if (currentOpenNode.fCost < node.fCost || currentOpenNode.fCost == node.fCost)
+                    if (currentOpenNode.FCost < node.FCost || currentOpenNode.FCost == node.FCost)
                     {
-                        if (currentOpenNode.hCost < node.hCost)
+                        if (currentOpenNode.HCost < node.HCost)
                         {
-                            nodeIndex = currentOpenNode.index;
+                            nodeIndex = currentOpenNode.Index;
                             node = nodes[nodeIndex];
                         }
                     }
@@ -192,12 +185,12 @@ namespace Astar
                         continue;
                     }
 
-                    int newCostToNeighbour = node.gCost + GetCostBetweenNodes(nodeIndex, neighbourIndex);
-                    if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbourIndex))
+                    int newCostToNeighbour = node.GCost + GetCostBetweenNodes(nodeIndex, neighbourIndex);
+                    if (newCostToNeighbour < neighbour.GCost || !openSet.Contains(neighbourIndex))
                     {
-                        neighbour.gCost = newCostToNeighbour;
-                        neighbour.hCost = GetCostBetweenNodes(neighbourIndex, targetNode);
-                        neighbour.parentIndex = nodeIndex;
+                        neighbour.GCost = newCostToNeighbour;
+                        neighbour.HCost = GetCostBetweenNodes(neighbourIndex, targetNode);
+                        neighbour.ParentIndex = nodeIndex;
                         nodes[neighbourIndex] = neighbour;
 
                         if (!openSet.Contains(neighbourIndex))
@@ -217,7 +210,7 @@ namespace Astar
             while (currentNode != startNode)
             {
                 path.Add(currentNode);
-                currentNode = nodes[currentNode].parentIndex;
+                currentNode = nodes[currentNode].ParentIndex;
             }
             path.Reverse();
 
@@ -230,8 +223,8 @@ namespace Astar
         {
             Vector2Int positionA = IndexToCoords(nodeA);
             Vector2Int positionB = IndexToCoords(nodeB);
-            int dstX = Math.Abs(positionA.x - positionB.x);
-            int dstY = Math.Abs(positionA.y - positionB.y);
+            int dstX = Math.Abs(positionA.X - positionB.X);
+            int dstY = Math.Abs(positionA.Y - positionB.Y);
 
             if (dstX > dstY)
                 return 14 * dstY + 10 * (dstX - dstY);
