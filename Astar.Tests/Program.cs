@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Tapas;
 
@@ -21,12 +22,30 @@ namespace Astar.Tests
             var pathfinding = new Pathfinding();
             var path = pathfinding.FindPath(startX, startY, endX, endY, grid);
 
-            DrawResult(sizeX, sizeY, startX, startY, endX, endY, path);
+            string expected =
+                "S_______________\n" +
+                "_#______________\n" +
+                "__#_____________\n" +
+                "___#____________\n" +
+                "____#___________\n" +
+                "_____#__________\n" +
+                "______#_________\n" +
+                "_______#________\n" +
+                "________#_______\n" +
+                "_________#______\n" +
+                "__________#_____\n" +
+                "___________#____\n" +
+                "____________#___\n" +
+                "_____________#__\n" +
+                "______________#_\n" +
+                "_______________#";
 
-            Assert.Equal(true, path == null);
+            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path);
+
+            Assert.Equal(expected, result);
         }
 
-        void DrawResult(int sizeX, int sizeY, int startX, int startY, int endX, int endY, List<Node> nodes)
+        string MapToString(int sizeX, int sizeY, int startX, int startY, int endX, int endY, List<Node> nodes)
         {
             StringBuilder[] map = new StringBuilder[sizeY];
 
@@ -43,11 +62,7 @@ namespace Astar.Tests
                 map[node.gridY][node.gridX] = '#';
             }
 
-            Console.WriteLine($"nodes.Length: {nodes.Count}");
-            for (int i = 0; i < sizeY; i++)
-            {
-                Console.WriteLine(map[i].ToString());
-            }
+            return String.Join("\n", map.Select(sb => sb.ToString()));
         }
     }
 

@@ -16,6 +16,14 @@ namespace Astar
             this.sizeY = sizeY;
 
             nodes = new Node[sizeX, sizeY];
+
+            for (int x = 0; x < sizeX; x++)
+            {
+                for (int y = 0; y < sizeY; y++)
+                {
+                    nodes[x, y] = new Node(true, x, y);
+                }
+            }
         }
 
 
@@ -140,7 +148,7 @@ namespace Astar
         public int hCost;
         public Node parent;
 
-        public Node(bool _walkable, Vector3 _worldPos, int _gridX, int _gridY)
+        public Node(bool _walkable, int _gridX, int _gridY)
         {
             walkable = _walkable;
             gridX = _gridX;
