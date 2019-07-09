@@ -46,7 +46,7 @@ namespace Astar.Tests
         }
 
         [Test]
-        public void Obstacle()
+        public void Obstacle_1()
         {
             int sizeX = 11;
             int sizeY = 6;
@@ -74,6 +74,36 @@ namespace Astar.Tests
                 "_______#___\n" +
                 "_______S___\n" +
                 "___________";
+
+            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, grid);
+
+            Assert.Equal(expected, result);
+        }
+
+        [Test]
+        public void Obstacle_2()
+        {
+            int sizeX = 7;
+            int sizeY = 4;
+            int startX = 0;
+            int startY = 3;
+            int endX = 6;
+            int endY = 1;
+
+            var grid = new Grid(sizeX, sizeY);
+
+            grid.GetNode(3, 1).walkable = false;
+            grid.GetNode(4, 1).walkable = false;
+            grid.GetNode(4, 2).walkable = false;
+
+            var pathfinding = new Pathfinding();
+            var path = pathfinding.FindPath(startX, startY, endX, endY, grid);
+
+            string expected =
+                "_______\n" +
+                "___oo_E\n" +
+                "____o#_\n" +
+                "S####__";
 
             string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, grid);
 
