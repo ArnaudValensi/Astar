@@ -110,6 +110,26 @@ namespace Astar.Tests
             Assert.Equal(expected, result);
         }
 
+        [Test]
+        public void No_end()
+        {
+            int sizeX = 5;
+            int sizeY = 1;
+            int startX = 0;
+            int startY = 0;
+            int endX = 4;
+            int endY = 0;
+
+            var grid = new Grid(sizeX, sizeY);
+
+            grid.GetNode(2, 0).walkable = false;
+
+            var pathfinding = new Pathfinding();
+            var path = pathfinding.FindPath(startX, startY, endX, endY, grid);
+
+            Assert.Equal(null, path);
+        }
+
         string MapToString(int sizeX, int sizeY, int startX, int startY, int endX, int endY, List<Node> nodes, Grid grid)
         {
             StringBuilder[] map = new StringBuilder[sizeY];
