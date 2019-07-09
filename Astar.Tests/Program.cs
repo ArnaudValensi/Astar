@@ -1,4 +1,5 @@
-﻿using Tapas;
+﻿using Microsoft.Xna.Framework;
+using Tapas;
 
 namespace Astar.Tests
 {
@@ -7,8 +8,10 @@ namespace Astar.Tests
         [Test]
         public void Equal()
         {
-            var astar = new AstarRunner();
-            Assert.Equal(true, astar != null);
+            var pathfinding = new Pathfinding();
+            var result = pathfinding.FindPath(Vector2.Zero, Vector2.Zero);
+
+            Assert.Equal(true, result == null);
         }
     }
 
