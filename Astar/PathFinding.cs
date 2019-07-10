@@ -245,7 +245,7 @@ namespace Astar
                         }
                         else 
                         {
-                            // openSet.UpdateItem(neighbourIndex);
+                            openSet.UpdateItem(neighbourIndex);
                         }
                     }
                 }
