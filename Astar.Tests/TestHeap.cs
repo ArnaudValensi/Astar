@@ -60,7 +60,7 @@ namespace Astar.Tests
         public void Add_in_order()
         {
             var heapItems = new HeapItems();
-            var heap = new Heap<int>(16, heapItems);
+            var heap = new Heap<int>(heapItems, 16);
 
             heap.Add(0);
             heap.Add(1);
@@ -83,7 +83,7 @@ namespace Astar.Tests
         public void Add_with_always_a_sorting_to_the_top()
         {
             var heapItems = new HeapItems();
-            var heap = new Heap<int>(16, heapItems);
+            var heap = new Heap<int>(heapItems, 16);
 
             heap.Add(5);
             heap.Add(4);
@@ -106,7 +106,7 @@ namespace Astar.Tests
         public void Test_contains()
         {
             var heapItems = new HeapItems();
-            var heap = new Heap<int>(16, heapItems);
+            var heap = new Heap<int>(heapItems, 16);
 
             heap.Add(0);
             heap.Add(1);
@@ -124,7 +124,7 @@ namespace Astar.Tests
         public void Test_remove_first()
         {
             var heapItems = new HeapItems();
-            var heap = new Heap<int>(16, heapItems);
+            var heap = new Heap<int>(heapItems, 16);
 
             heap.Add(5);
             heap.Add(4);
@@ -145,7 +145,7 @@ namespace Astar.Tests
         public void Test_update_item()
         {
             var heapItems = new HeapItems();
-            var heap = new Heap<int>(16, heapItems);
+            var heap = new Heap<int>(heapItems, 16);
 
             heap.Add(5);
             heap.Add(4);

@@ -159,7 +159,7 @@ namespace Astar
 
             nodes = new Node[mapSize];
             var heapItems = new HeapItems(nodes);
-            openSet = new Heap<int>(mapSize, heapItems);
+            openSet = new Heap<int>(heapItems, mapSize);
             closedSet = new HashSet<int>();
         }
 

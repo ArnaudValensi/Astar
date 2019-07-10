@@ -3,17 +3,19 @@
 // https://www.youtube.com/watch?v=3Dw5d7PlcTM
 // https://youtu.be/t0Cq6tVNRBA
 
+using System.Collections.Generic;
+
 namespace Astar
 {
     public class Heap<T> {
-        T[] items;
+        List<T> items;
         int currentItemCount;
         IHeapItems<T> heapItems;
 	
-        public Heap(int maxHeapSize, IHeapItems<T> heapItems)
+        public Heap(IHeapItems<T> heapItems, int capacity)
         {
             this.heapItems = heapItems;
-            items = new T[maxHeapSize];
+            items = new List<T>(capacity);
         }
 
         public void Clear()
@@ -23,7 +25,7 @@ namespace Astar
 	
         public void Add(T item) {
             heapItems.SetItemHeapIndex(item, currentItemCount);
-            items[currentItemCount] = item;
+            items.Add(item);
             SortUp(item);
             currentItemCount++;
         }
