@@ -22,8 +22,9 @@ namespace Astar.Tests
 
             var mapInfo = new DefaultMapInfo(sizeX, sizeY);
             var pathfinding = new PathFinding(mapInfo);
-            var path = pathfinding.FindPath(startX, startY, endX, endY);
-            
+            var path = new List<int>();
+            pathfinding.FindPath(startX, startY, endX, endY, path);
+
             Console.WriteLine($"path null? {path == null}");
 
             string expected =
@@ -69,7 +70,8 @@ namespace Astar.Tests
             mapInfo.SetWalkable(7, 2, false);
 
             var pathfinding = new PathFinding(mapInfo);
-            var path = pathfinding.FindPath(startX, startY, endX, endY);
+            var path = new List<int>();
+            pathfinding.FindPath(startX, startY, endX, endY, path);
 
             string expected =
                 "___________\n" +
@@ -101,7 +103,8 @@ namespace Astar.Tests
             mapInfo.SetWalkable(4, 2, false);
 
             var pathfinding = new PathFinding(mapInfo);
-            var path = pathfinding.FindPath(startX, startY, endX, endY);
+            var path = new List<int>();
+            pathfinding.FindPath(startX, startY, endX, endY, path);
 
             string expected =
                 "_______\n" +
@@ -129,9 +132,10 @@ namespace Astar.Tests
             mapInfo.SetWalkable(2, 0, false);
 
             var pathfinding = new PathFinding(mapInfo);
-            var path = pathfinding.FindPath(startX, startY, endX, endY);
+            var path = new List<int>();
+            pathfinding.FindPath(startX, startY, endX, endY, path);
 
-            Assert.Equal(null, path);
+            Assert.Equal(0, path.Count);
         }
 
         string MapToString(int sizeX, int sizeY, int startX, int startY, int endX, int endY, List<int> cellIndexes, DefaultMapInfo pathMapLayer)

@@ -20,13 +20,15 @@ namespace Astar.Benchmarks
         int startY = 0;
         int endX;
         int endY;
-        
+        List<int> path;
+
         public AstarBenchmark()
         {
             endX = sizeX - 1;
             endY = sizeY - 1;
             
             mapInfo = new DefaultMapInfo(sizeX, sizeY);
+            path = new List<int>();
 
             int threeQuarter = sizeX / 4 * 3;
             for (int y = 1; y < sizeY; y++)
@@ -73,7 +75,7 @@ namespace Astar.Benchmarks
         [Benchmark]
         public List<int> SystemDiagnostic()
         {
-            var path = pathfinding.FindPath(startX, startY, endX, endY);
+            pathfinding.FindPath(startX, startY, endX, endY, path);
             
 //            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, mapInfo);
 //            Console.WriteLine(result);

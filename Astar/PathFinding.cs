@@ -179,11 +179,14 @@ namespace Astar
             }
         }
 
-        public List<int> FindPath(int startX, int startY, int targetX, int targetY)
+        public void FindPath(int startX, int startY, int targetX, int targetY, List<int> resultPath)
         {
+            resultPath.Clear();
+
             int startNode = CoordsToIndex(startX, startY);
             int targetNode = CoordsToIndex(targetX, targetY);
 
+            // TODO: Move to top.
             Clear();
 
             openSet.Add(startNode);
@@ -198,7 +201,8 @@ namespace Astar
 
                 if (nodeIndex == targetNode)
                 {
-                    return RetracePath(startNode, targetNode);
+                    RetracePath(startNode, targetNode, resultPath);
+                    return;
                 }
 
                 var neighbours = mapInfo.GetWalkableNeighbours(nodeIndex);
@@ -231,12 +235,11 @@ namespace Astar
                 }
             }
 
-            return null;
+            return;
         }
 
-        List<int> RetracePath(int startNode, int endNode)
+        void RetracePath(int startNode, int endNode, List<int> path)
         {
-            List<int> path = new List<int>();
             int currentNode = endNode;
 
             while (currentNode != startNode)
@@ -245,9 +248,6 @@ namespace Astar
                 currentNode = nodes[currentNode].ParentIndex;
             }
             path.Reverse();
-
-            return path;
-
         }
     }
 }
