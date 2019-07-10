@@ -14,8 +14,8 @@ namespace Astar.Benchmarks
     {
         DefaultMapInfo mapInfo;
         PathFinding pathfinding;
-        int sizeX = 256;
-        int sizeY = 256;
+        int sizeX = 16;
+        int sizeY = 16;
         int startX = 0;
         int startY = 0;
         int endX;
@@ -75,8 +75,8 @@ namespace Astar.Benchmarks
         {
             var path = pathfinding.FindPath(startX, startY, endX, endY);
             
-//            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, mapInfo);
-//            Console.WriteLine(result);
+            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, mapInfo);
+            Console.WriteLine(result);
 
             return path;
         }

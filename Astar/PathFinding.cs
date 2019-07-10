@@ -240,7 +240,13 @@ namespace Astar
                         nodes[neighbourIndex] = neighbour;
 
                         if (!openSet.Contains(neighbourIndex))
+                        {
                             openSet.Add(neighbourIndex);
+                        }
+                        else 
+                        {
+                            // openSet.UpdateItem(neighbourIndex);
+                        }
                     }
                 }
             }
