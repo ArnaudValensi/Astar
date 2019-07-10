@@ -11,7 +11,7 @@ namespace Astar
         List<int> GetWalkableNeighbours(int cellIndex);
         int GetCostBetweenNodes(int nodeIndex1, int nodeIndex2);
     }
-    
+
     public static class MapUtils
     {
         public static int CoordsToIndex(int x, int y, int sizeX)
@@ -133,19 +133,20 @@ namespace Astar
     {
         readonly Node[] nodes;
         readonly int mapSizeX;
+        readonly int mapSize;
         readonly IPathFindingMapInfo mapInfo;
+        readonly List<int> openSet;
+        readonly HashSet<int> closedSet;
 
         public PathFinding(IPathFindingMapInfo mapInfo)
         {
             this.mapInfo = mapInfo;
             mapSizeX = mapInfo.SizeX;
-            int mapSize = mapInfo.SizeX * mapInfo.SizeY;
-            nodes = new Node[mapSize];
+            mapSize = mapInfo.SizeX * mapInfo.SizeY;
 
-            for (int i = 0; i < mapSize; i++)
-            {
-                nodes[i] = new Node(i);
-            }
+            openSet = new List<int>();
+            closedSet = new HashSet<int>();
+            nodes = new Node[mapSize];
         }
 
         int CoordsToIndex(int x, int y)
@@ -157,15 +158,25 @@ namespace Astar
         {
             return new Vector2Int(index % mapSizeX, index / mapSizeX);
         }
-        
+
+        void Clear()
+        {
+            openSet.Clear();
+            closedSet.Clear();
+
+            for (int i = 0; i < mapSize; i++)
+            {
+                nodes[i] = new Node(i);
+            }
+        }
+
         public List<int> FindPath(int startX, int startY, int targetX, int targetY)
         {
             int startNode = CoordsToIndex(startX, startY);
             int targetNode = CoordsToIndex(targetX, targetY);
 
-            // TODO: Just clear.
-            List<int> openSet = new List<int>();
-            HashSet<int> closedSet = new HashSet<int>();
+            Clear();
+
             openSet.Add(startNode);
 
             while (openSet.Count > 0)
@@ -194,12 +205,10 @@ namespace Astar
                     return RetracePath(startNode, targetNode);
                 }
 
-                // TODO: Does a call to iterator called multiple time in foreach.
-                var neighbours = mapInfo.GetWalkableNeighbours(nodeIndex);
-                foreach (int neighbourIndex in neighbours)
+                foreach (int neighbourIndex in mapInfo.GetWalkableNeighbours(nodeIndex))
                 {
                     Node neighbour = nodes[neighbourIndex];
-                    
+
                     if (closedSet.Contains(neighbourIndex))
                     {
                         continue;
