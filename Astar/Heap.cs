@@ -7,11 +7,10 @@ using System;
 
 namespace Astar
 {
-    public class Heap<T> where T : IComparable<T>
+    public class Heap<T> where T : IHeapItem<T>
     {
         T[] items;
         int currentItemCount;
-        // private IComparer<T> comparer;
 	
         public Heap(int maxHeapSize)
         {
@@ -24,23 +23,23 @@ namespace Astar
         }
 	
         public void Add(T item) {
-            //item.HeapIndex = currentItemCount;
+            item.HeapIndex = currentItemCount;
             items[currentItemCount] = item;
-            SortUp(currentItemCount);
+            SortUp(item);
             currentItemCount++;
         }
 
         public T RemoveFirst() {
             T firstItem = items[0];
-            currentItemCount--; // items[currentItemCount] = 0 ?
+            currentItemCount--;
             items[0] = items[currentItemCount];
-            //items[0].HeapIndex = 0;
-            SortDown(0);
+            items[0].HeapIndex = 0;
+            SortDown(items[0]);
             return firstItem;
         }
 
         public void UpdateItem(T item) {
-            //SortUp(item);
+            SortUp(item);
             
             // NOTE: If we want to use the heap with items that can have priority reduced, we have to
             // add `SortDown(item)`.
@@ -51,17 +50,12 @@ namespace Astar
 
         public bool Contains(T item)
         {
-            return true;
-            //return Equals(items[itemIndex], item);
-
-            //return heapItems.Compare(items[itemIndex], item) == 0;
-            //return Equals(items[item.HeapIndex], item);
+            return Equals(items[item.HeapIndex], item);
         }
 
-        void SortDown(int itemIndex) {
+        void SortDown(T item) {
             while (true) {
-                // int itemIndex = heapItems.GetItemHeapIndex(item);
-                int childIndexLeft = itemIndex * 2 + 1;
+                int childIndexLeft = item.HeapIndex * 2 + 1;
                 int childIndexRight = childIndexLeft + 1;
                 int swapIndex = 0;
 
@@ -74,8 +68,9 @@ namespace Astar
                         }
                     }
 
-                    if (items[itemIndex].CompareTo(items[swapIndex]) < 0) {
-                        Swap (itemIndex,swapIndex);
+                    if (item.CompareTo(items[swapIndex]) < 0) {
+                        // We need to get the swapped item in the case T it a value type.
+                        item = Swap (item,items[swapIndex]);
                     }
                     else {
                         return;
@@ -85,35 +80,43 @@ namespace Astar
                 else {
                     return;
                 }
+
             }
         }
 	
-        void SortUp(int itemIndex)
-        {
-            // int itemIndex = heapItems.GetItemHeapIndex(item);
-            var item = items[itemIndex];
-            int parentIndex = (itemIndex-1)/2;
+        void SortUp(T item) {
+            int parentIndex = (item.HeapIndex-1)/2;
 		
             while (true) {
                 T parentItem = items[parentIndex];
                 if (item.CompareTo(parentItem) > 0) {
-                    Swap (itemIndex,parentIndex);
-                    itemIndex = parentIndex;
+                    // We need to get the swapped item in the case T it a value type.
+                    item = Swap (item,parentItem);
                 }
                 else {
                     break;
                 }
 
-                // itemIndex = heapItems.GetItemHeapIndex(item);
-                parentIndex = (itemIndex-1)/2;
+                parentIndex = (item.HeapIndex-1)/2;
             }
         }
 	
-        void Swap(int itemIndexA, int itemIndexB)
-        {
-            var itemA = items[itemIndexA];
-            items[itemIndexA] = items[itemIndexB];
-            items[itemIndexB] = itemA;
+        T Swap(T itemA, T itemB) {
+            int itemAIndex = itemA.HeapIndex;
+            itemA.HeapIndex = itemB.HeapIndex;
+            itemB.HeapIndex = itemAIndex;
+            
+            items[itemB.HeapIndex] = itemB;
+            items[itemA.HeapIndex] = itemA;
+
+            return itemA;
+        }
+    }
+    
+    public interface IHeapItem<T> : IComparable<T> {
+        int HeapIndex {
+            get;
+            set;
         }
     }
 }

@@ -131,17 +131,20 @@ namespace Astar
 //        }
 //    }
 
-    public struct HeapItem : IComparable<HeapItem>
+    public struct HeapItem : IHeapItem<HeapItem>
     {
         public int NodeIndex;
         public int FCost;
         public int HCost;
 
+        public int HeapIndex { get; set; }
+        
         public HeapItem(int nodeIndex, int fCost, int hCost)
         {
             NodeIndex = nodeIndex;
             FCost = fCost;
             HCost = hCost;
+            HeapIndex = 0;
         }
         
         public int CompareTo(HeapItem other)
