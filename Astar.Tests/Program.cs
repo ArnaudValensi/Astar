@@ -24,6 +24,8 @@ namespace Astar.Tests
             var mapInfo = new DefaultMapInfo(sizeX, sizeY);
             var pathfinding = new PathFinding(mapInfo);
             var path = pathfinding.FindPath(startX, startY, endX, endY);
+            
+            Console.WriteLine($"path null? {path == null}");
 
             string expected =
                 "S_______________\n" +

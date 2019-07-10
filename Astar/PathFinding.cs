@@ -97,6 +97,40 @@ namespace Astar
         }
     }
 
+    public class HeapItems : IHeapItems<int>
+    {
+        private Node[] nodes;
+        public HeapItems(Node[] nodes)
+        {
+            this.nodes = nodes;
+        }
+        
+        public int Compare(int item1, int item2)
+        {
+            Node node1 = nodes[item1];
+            Node node2 = nodes[item2];
+            
+            int compare = node1.FCost.CompareTo(node2.FCost);
+
+            if (compare == 0)
+            {
+                compare = node1.HCost.CompareTo(node2.HCost);
+            }
+
+            return -compare;
+        }
+
+        public int GetItemHeapIndex(int item)
+        {
+            return nodes[item].HeapIndex;
+        }
+
+        public void SetItemHeapIndex(int item, int newIndex)
+        {
+            nodes[item].HeapIndex = newIndex;
+        }
+    }
+
     public struct Node
     {
         public readonly int Index;
@@ -105,6 +139,8 @@ namespace Astar
         public int GCost;
         public int HCost;
 
+        public int HeapIndex;
+
         public Node(int index)
         {
             this.Index = index;
@@ -112,6 +148,8 @@ namespace Astar
 
             GCost = 0;
             HCost = 0;
+
+            HeapIndex = 0;
         }
 
         public int FCost => GCost + HCost;
@@ -123,7 +161,7 @@ namespace Astar
         readonly int mapSizeX;
         readonly int mapSize;
         readonly IPathFindingMapInfo mapInfo;
-        readonly List<int> openSet;
+        readonly Heap<int> openSet;
         readonly HashSet<int> closedSet;
 
         public PathFinding(IPathFindingMapInfo mapInfo)
@@ -132,9 +170,10 @@ namespace Astar
             mapSizeX = mapInfo.SizeX;
             mapSize = mapInfo.SizeX * mapInfo.SizeY;
 
-            openSet = new List<int>();
-            closedSet = new HashSet<int>();
             nodes = new Node[mapSize];
+            var heapItems = new HeapItems(nodes);
+            openSet = new Heap<int>(mapSize, heapItems);
+            closedSet = new HashSet<int>();
         }
 
         int CoordsToIndex(int x, int y)
@@ -170,22 +209,12 @@ namespace Astar
             while (openSet.Count > 0)
             {
                 // Get the cheapest open node.
-                int nodeIndex = openSet[0];
+//                int nodeIndex = openSet[0];
+                int nodeIndex = openSet.RemoveFirst();
                 Node node = nodes[nodeIndex];
-                for (int i = 1; i < openSet.Count; i++)
-                {
-                    Node currentOpenNode = nodes[openSet[i]];
-                    if (currentOpenNode.FCost < node.FCost || currentOpenNode.FCost == node.FCost)
-                    {
-                        if (currentOpenNode.HCost < node.HCost)
-                        {
-                            nodeIndex = currentOpenNode.Index;
-                            node = nodes[nodeIndex];
-                        }
-                    }
-                }
 
-                openSet.Remove(nodeIndex);
+                // TODO openSet.UpdateItem?
+                
                 closedSet.Add(nodeIndex);
 
                 if (nodeIndex == targetNode)

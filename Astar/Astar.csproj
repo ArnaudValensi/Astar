@@ -27,6 +27,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Heap.cs" />
     <Compile Include="MapUtils.cs" />
     <Compile Include="PathFinding.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
