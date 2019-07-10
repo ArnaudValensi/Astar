@@ -14,8 +14,8 @@ namespace Astar.Benchmarks
     {
         DefaultMapInfo mapInfo;
         PathFinding pathfinding;
-        int sizeX = 16;
-        int sizeY = 16;
+        int sizeX = 256;
+        int sizeY = 256;
         int startX = 0;
         int startY = 0;
         int endX;
