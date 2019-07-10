@@ -27,6 +27,13 @@ namespace Astar.Benchmarks
             endY = sizeY - 1;
             
             mapInfo = new DefaultMapInfo(sizeX, sizeY);
+
+            int threeQuarter = sizeX / 4 * 3;
+            for (int y = 1; y < sizeY; y++)
+            {
+                mapInfo.SetWalkable(threeQuarter, y, false);
+            }
+            
             pathfinding = new PathFinding(mapInfo);
         }
         
