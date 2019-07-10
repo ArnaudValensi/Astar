@@ -75,8 +75,8 @@ namespace Astar.Benchmarks
         {
             var path = pathfinding.FindPath(startX, startY, endX, endY);
             
-            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, mapInfo);
-            Console.WriteLine(result);
+//            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, mapInfo);
+//            Console.WriteLine(result);
 
             return path;
         }
