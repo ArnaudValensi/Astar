@@ -65,7 +65,7 @@ namespace Astar
             while (true) {
                 int itemIndex = heapItems.GetItemHeapIndex(item);
                 int childIndexLeft = itemIndex * 2 + 1;
-                int childIndexRight = itemIndex * 2 + 2;
+                int childIndexRight = childIndexLeft + 1;
                 int swapIndex = 0;
 
                 if (childIndexLeft < currentItemCount) {
