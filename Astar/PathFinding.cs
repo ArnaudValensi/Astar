@@ -4,6 +4,14 @@ using BigSeed.Math;
 
 namespace Astar
 {
+    public interface IPathFindingMapInfo
+    {
+        int SizeX { get; }
+        int SizeY { get; }
+        List<int> GetWalkableNeighbours(int cellIndex);
+        int GetCostBetweenNodes(int nodeIndex1, int nodeIndex2);
+    }
+    
     public static class MapUtils
     {
         public static int CoordsToIndex(int x, int y, int sizeX)
@@ -16,15 +24,15 @@ namespace Astar
             return new Vector2Int(index % sizeX, index / sizeX);
         }
     }
-    
-    public class PathMapLayer
+
+    public class DefaultMapInfo : IPathFindingMapInfo
     {
         readonly bool[] isWalkable;
         readonly int sizeX;
         readonly int sizeY;
         readonly int size;
 
-        public PathMapLayer(int sizeX, int sizeY)
+        public DefaultMapInfo(int sizeX, int sizeY)
         {
             this.sizeX = sizeX;
             this.sizeY = sizeY;
@@ -47,6 +55,15 @@ namespace Astar
         public bool IsWalkable(int x, int y)
         {
             return isWalkable[MapUtils.CoordsToIndex(x, y, sizeX)];
+        }
+
+        public int SizeX
+        {
+            get { return sizeX; }
+        }
+        public int SizeY
+        {
+            get { return sizeY;  }
         }
 
         public List<int> GetWalkableNeighbours(int cellIndex)
@@ -116,11 +133,13 @@ namespace Astar
     {
         readonly Node[] nodes;
         readonly int mapSizeX;
+        readonly IPathFindingMapInfo mapInfo;
 
-        public PathFinding(int sizeX, int sizeY)
+        public PathFinding(IPathFindingMapInfo mapInfo)
         {
-            mapSizeX = sizeX;
-            int mapSize = sizeX * sizeY;
+            this.mapInfo = mapInfo;
+            mapSizeX = mapInfo.SizeX;
+            int mapSize = mapInfo.SizeX * mapInfo.SizeY;
             nodes = new Node[mapSize];
 
             for (int i = 0; i < mapSize; i++)
@@ -139,7 +158,7 @@ namespace Astar
             return new Vector2Int(index % mapSizeX, index / mapSizeX);
         }
         
-        public List<int> FindPath(int startX, int startY, int targetX, int targetY, PathMapLayer pathMapLayer)
+        public List<int> FindPath(int startX, int startY, int targetX, int targetY)
         {
             int startNode = CoordsToIndex(startX, startY);
             int targetNode = CoordsToIndex(targetX, targetY);
@@ -176,7 +195,7 @@ namespace Astar
                 }
 
                 // TODO: Does a call to iterator called multiple time in foreach.
-                var neighbours = pathMapLayer.GetWalkableNeighbours(nodeIndex);
+                var neighbours = mapInfo.GetWalkableNeighbours(nodeIndex);
                 foreach (int neighbourIndex in neighbours)
                 {
                     Node neighbour = nodes[neighbourIndex];
@@ -186,11 +205,11 @@ namespace Astar
                         continue;
                     }
 
-                    int newCostToNeighbour = node.GCost + pathMapLayer.GetCostBetweenNodes(nodeIndex, neighbourIndex);
+                    int newCostToNeighbour = node.GCost + mapInfo.GetCostBetweenNodes(nodeIndex, neighbourIndex);
                     if (newCostToNeighbour < neighbour.GCost || !openSet.Contains(neighbourIndex))
                     {
                         neighbour.GCost = newCostToNeighbour;
-                        neighbour.HCost = pathMapLayer.GetCostBetweenNodes(neighbourIndex, targetNode);
+                        neighbour.HCost = mapInfo.GetCostBetweenNodes(neighbourIndex, targetNode);
                         neighbour.ParentIndex = nodeIndex;
                         nodes[neighbourIndex] = neighbour;
 

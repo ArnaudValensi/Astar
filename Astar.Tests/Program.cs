@@ -20,9 +20,9 @@ namespace Astar.Tests
             int endX = sizeX - 1;
             int endY = sizeY - 1;
 
-            var pathMapLayer = new PathMapLayer(sizeX, sizeY);
-            var pathfinding = new PathFinding(sizeX, sizeY);
-            var path = pathfinding.FindPath(startX, startY, endX, endY, pathMapLayer);
+            var mapInfo = new DefaultMapInfo(sizeX, sizeY);
+            var pathfinding = new PathFinding(mapInfo);
+            var path = pathfinding.FindPath(startX, startY, endX, endY);
 
             string expected =
                 "S_______________\n" +
@@ -42,7 +42,7 @@ namespace Astar.Tests
                 "______________#_\n" +
                 "_______________E";
 
-            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, pathMapLayer);
+            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, mapInfo);
 
             Assert.Equal(expected, result);
         }
@@ -57,17 +57,17 @@ namespace Astar.Tests
             int endX = 4;
             int endY = 1;
 
-            var pathMapLayer = new PathMapLayer(sizeX, sizeY);
+            var mapInfo = new DefaultMapInfo(sizeX, sizeY);
 
-            pathMapLayer.SetWalkable(3, 1, false);
-            pathMapLayer.SetWalkable(3, 2, false);
-            pathMapLayer.SetWalkable(4, 2, false);
-            pathMapLayer.SetWalkable(5, 2, false);
-            pathMapLayer.SetWalkable(6, 2, false);
-            pathMapLayer.SetWalkable(7, 2, false);
+            mapInfo.SetWalkable(3, 1, false);
+            mapInfo.SetWalkable(3, 2, false);
+            mapInfo.SetWalkable(4, 2, false);
+            mapInfo.SetWalkable(5, 2, false);
+            mapInfo.SetWalkable(6, 2, false);
+            mapInfo.SetWalkable(7, 2, false);
 
-            var pathfinding = new PathFinding(sizeX, sizeY);
-            var path = pathfinding.FindPath(startX, startY, endX, endY, pathMapLayer);
+            var pathfinding = new PathFinding(mapInfo);
+            var path = pathfinding.FindPath(startX, startY, endX, endY);
 
             string expected =
                 "___________\n" +
@@ -77,7 +77,7 @@ namespace Astar.Tests
                 "_______S___\n" +
                 "___________";
 
-            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, pathMapLayer);
+            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, mapInfo);
 
             Assert.Equal(expected, result);
         }
@@ -92,14 +92,14 @@ namespace Astar.Tests
             int endX = 6;
             int endY = 1;
 
-            var pathMapLayer = new PathMapLayer(sizeX, sizeY);
+            var mapInfo = new DefaultMapInfo(sizeX, sizeY);
 
-            pathMapLayer.SetWalkable(3, 1, false);
-            pathMapLayer.SetWalkable(4, 1, false);
-            pathMapLayer.SetWalkable(4, 2, false);
+            mapInfo.SetWalkable(3, 1, false);
+            mapInfo.SetWalkable(4, 1, false);
+            mapInfo.SetWalkable(4, 2, false);
 
-            var pathfinding = new PathFinding(sizeX, sizeY);
-            var path = pathfinding.FindPath(startX, startY, endX, endY, pathMapLayer);
+            var pathfinding = new PathFinding(mapInfo);
+            var path = pathfinding.FindPath(startX, startY, endX, endY);
 
             string expected =
                 "_______\n" +
@@ -107,7 +107,7 @@ namespace Astar.Tests
                 "____o#_\n" +
                 "S####__";
 
-            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, pathMapLayer);
+            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, mapInfo);
 
             Assert.Equal(expected, result);
         }
@@ -122,17 +122,17 @@ namespace Astar.Tests
             int endX = 4;
             int endY = 0;
 
-            var pathMapLayer = new PathMapLayer(sizeX, sizeY);
+            var mapInfo = new DefaultMapInfo(sizeX, sizeY);
 
-            pathMapLayer.SetWalkable(2, 0, false);
+            mapInfo.SetWalkable(2, 0, false);
 
-            var pathfinding = new PathFinding(sizeX, sizeY);
-            var path = pathfinding.FindPath(startX, startY, endX, endY, pathMapLayer);
+            var pathfinding = new PathFinding(mapInfo);
+            var path = pathfinding.FindPath(startX, startY, endX, endY);
 
             Assert.Equal(null, path);
         }
 
-        string MapToString(int sizeX, int sizeY, int startX, int startY, int endX, int endY, List<int> cellIndexes, PathMapLayer pathMapLayer)
+        string MapToString(int sizeX, int sizeY, int startX, int startY, int endX, int endY, List<int> cellIndexes, DefaultMapInfo pathMapLayer)
         {
             StringBuilder[] map = new StringBuilder[sizeY];
 
