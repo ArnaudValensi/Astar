@@ -133,25 +133,12 @@ namespace Astar
 
     public struct Node
     {
-        public readonly int Index;
+        public int HeapIndex;
         public int ParentIndex;
 
         public int GCost;
         public int HCost;
-
-        public int HeapIndex;
-
-        public Node(int index)
-        {
-            this.Index = index;
-            ParentIndex = 0;
-
-            GCost = 0;
-            HCost = 0;
-
-            HeapIndex = 0;
-        }
-
+        
         public int FCost => GCost + HCost;
     }
 
@@ -181,11 +168,6 @@ namespace Astar
             return MapUtils.CoordsToIndex(x, y, mapSizeX);
         }
 
-        Vector2Int IndexToCoords(int index)
-        {
-            return new Vector2Int(index % mapSizeX, index / mapSizeX);
-        }
-
         void Clear()
         {
             openSet.Clear();
@@ -193,7 +175,7 @@ namespace Astar
 
             for (int i = 0; i < mapSize; i++)
             {
-                nodes[i] = new Node(i);
+                nodes[i] = new Node();
             }
         }
 
@@ -209,12 +191,9 @@ namespace Astar
             while (openSet.Count > 0)
             {
                 // Get the cheapest open node.
-//                int nodeIndex = openSet[0];
                 int nodeIndex = openSet.RemoveFirst();
                 Node node = nodes[nodeIndex];
 
-                // TODO openSet.UpdateItem?
-                
                 closedSet.Add(nodeIndex);
 
                 if (nodeIndex == targetNode)

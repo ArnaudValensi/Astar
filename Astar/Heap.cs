@@ -8,7 +8,6 @@ namespace Astar
     public class Heap<T> {
         T[] items;
         int currentItemCount;
-        // private IComparer<T> comparer;
         IHeapItems<T> heapItems;
 	
         public Heap(int maxHeapSize, IHeapItems<T> heapItems)
@@ -24,7 +23,6 @@ namespace Astar
 	
         public void Add(T item) {
             heapItems.SetItemHeapIndex(item, currentItemCount);
-            //item.HeapIndex = currentItemCount;
             items[currentItemCount] = item;
             SortUp(item);
             currentItemCount++;
@@ -32,10 +30,9 @@ namespace Astar
 
         public T RemoveFirst() {
             T firstItem = items[0];
-            currentItemCount--; // items[currentItemCount] = 0 ?
+            currentItemCount--;
             items[0] = items[currentItemCount];
             heapItems.SetItemHeapIndex(items[0], 0);
-            //items[0].HeapIndex = 0;
             SortDown(items[0]);
             return firstItem;
         }
@@ -48,19 +45,12 @@ namespace Astar
             // We can add a boolean passed to the constructor to disable the sort down.
         }
 
-        public int Count {
-            get {
-                return currentItemCount;
-            }
-        }
+        public int Count => currentItemCount;
 
         public bool Contains(T item)
         {
             int itemIndex = heapItems.GetItemHeapIndex(item);
             return Equals(items[itemIndex], item);
-
-            //return heapItems.Compare(items[itemIndex], item) == 0;
-            //return Equals(items[item.HeapIndex], item);
         }
 
         void SortDown(T item) {
@@ -74,13 +64,11 @@ namespace Astar
                     swapIndex = childIndexLeft;
 
                     if (childIndexRight < currentItemCount) {
-                        // if (items[childIndexLeft].CompareTo(items[childIndexRight]) < 0) {
                         if (heapItems.Compare(items[childIndexLeft], items[childIndexRight]) < 0) {
                             swapIndex = childIndexRight;
                         }
                     }
 
-                    // if (item.CompareTo(items[swapIndex]) < 0) {
                     if (heapItems.Compare(item, items[swapIndex]) < 0) {
                         Swap (item,items[swapIndex]);
                     }
@@ -102,7 +90,6 @@ namespace Astar
 		
             while (true) {
                 T parentItem = items[parentIndex];
-                // if (item.CompareTo(parentItem) > 0) {
                 if (heapItems.Compare(item, parentItem) > 0) {
                     Swap (item,parentItem);
                 }
