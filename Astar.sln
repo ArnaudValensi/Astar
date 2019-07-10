@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Astar.Tests", "Astar.Tests\Astar.Tests.csproj", "{6ED51D98-2DAB-48C8-98B6-6BEEE921B372}"
@@ -6,6 +6,8 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Tapas", "..\..\..\Tapas\Tapas\Tapas.shproj", "{017C234F-166F-478B-AF6E-06B853137E80}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Astar", "Astar\Astar.csproj", "{3713A283-1140-46A8-AA64-D48AF95E244E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Astar.Benchmarks", "Astar.Benchmarks\Astar.Benchmarks.csproj", "{3D98AD57-6AC7-416B-9915-79B9B59DE93B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,5 +23,9 @@ Global
 		{3713A283-1140-46A8-AA64-D48AF95E244E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3713A283-1140-46A8-AA64-D48AF95E244E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3713A283-1140-46A8-AA64-D48AF95E244E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D98AD57-6AC7-416B-9915-79B9B59DE93B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D98AD57-6AC7-416B-9915-79B9B59DE93B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D98AD57-6AC7-416B-9915-79B9B59DE93B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D98AD57-6AC7-416B-9915-79B9B59DE93B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
