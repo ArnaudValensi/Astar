@@ -182,12 +182,10 @@ namespace Astar
         public void FindPath(int startX, int startY, int targetX, int targetY, List<int> resultPath)
         {
             resultPath.Clear();
+            Clear();
 
             int startNode = CoordsToIndex(startX, startY);
             int targetNode = CoordsToIndex(targetX, targetY);
-
-            // TODO: Move to top.
-            Clear();
 
             openSet.Add(startNode);
 
