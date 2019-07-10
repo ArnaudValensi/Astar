@@ -8,12 +8,12 @@ namespace Astar.Tests
         internal struct HeapNode
         {
             public int HeapIndex;
-            public int Cost;
+            public int Value;
 
-            public HeapNode(int heapIndex, int cost)
+            public HeapNode(int heapIndex, int value)
             {
                 HeapIndex = heapIndex;
-                Cost = cost;
+                Value = value;
             }
         }
         
@@ -33,7 +33,7 @@ namespace Astar.Tests
             var node1 = items[item1];
             var node2 = items[item2];
             
-            return node1.Cost.CompareTo(node2.Cost);
+            return node1.Value.CompareTo(node2.Value);
         }
 
         public int GetItemHeapIndex(int item)
@@ -70,7 +70,6 @@ namespace Astar.Tests
             Assert.Equal(4, items[4]);
             Assert.Equal(5, items[5]);
 
-//            heap.Contains(neighbourIndex);
 //            heap.UpdateItem(neighbourIndex);
 //            heap.RemoveFirst();
         }
@@ -96,6 +95,24 @@ namespace Astar.Tests
             Assert.Equal(5, items[3]);
             Assert.Equal(3, items[4]);
             Assert.Equal(4, items[5]);
+        }
+        
+        [Test]
+        public void Test_contains()
+        {
+            var heapItems = new HeapItems();
+            var heap = new Heap<int>(16, heapItems);
+            
+            heap.Add(0);
+            heap.Add(1);
+            heap.Add(2);
+            heap.Add(3);
+            heap.Add(4);
+            heap.Add(5);
+            
+            Assert.Equal(true, heap.Contains(0));
+            Assert.Equal(true, heap.Contains(5));
+            Assert.Equal(false, heap.Contains(6));
         }
     }
 }
