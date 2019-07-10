@@ -97,37 +97,63 @@ namespace Astar
         }
     }
 
-    public class HeapItems : IHeapItems<int>
+//    public class HeapItems : IHeapItems<int>
+//    {
+//        private Node[] nodes;
+//        public HeapItems(Node[] nodes)
+//        {
+//            this.nodes = nodes;
+//        }
+//        
+//        public int Compare(int item1, int item2)
+//        {
+//            Node node1 = nodes[item1];
+//            Node node2 = nodes[item2];
+//            
+//            int compare = node1.FCost.CompareTo(node2.FCost);
+//
+//            if (compare == 0)
+//            {
+//                compare = node1.HCost.CompareTo(node2.HCost);
+//            }
+//
+//            return -compare;
+//        }
+//
+//        public int GetItemHeapIndex(int item)
+//        {
+//            return nodes[item].HeapIndex;
+//        }
+//
+//        public void SetItemHeapIndex(int item, int newIndex)
+//        {
+//            nodes[item].HeapIndex = newIndex;
+//        }
+//    }
+
+    public struct HeapItem : IComparable<HeapItem>
     {
-        private Node[] nodes;
-        public HeapItems(Node[] nodes)
+        public int NodeIndex;
+        public int FCost;
+        public int HCost;
+
+        public HeapItem(int nodeIndex, int fCost, int hCost)
         {
-            this.nodes = nodes;
+            NodeIndex = nodeIndex;
+            FCost = fCost;
+            HCost = hCost;
         }
         
-        public int Compare(int item1, int item2)
+        public int CompareTo(HeapItem other)
         {
-            Node node1 = nodes[item1];
-            Node node2 = nodes[item2];
-            
-            int compare = node1.FCost.CompareTo(node2.FCost);
+            int compare = FCost.CompareTo(other.FCost);
 
             if (compare == 0)
             {
-                compare = node1.HCost.CompareTo(node2.HCost);
+                compare = HCost.CompareTo(other.HCost);
             }
 
             return -compare;
-        }
-
-        public int GetItemHeapIndex(int item)
-        {
-            return nodes[item].HeapIndex;
-        }
-
-        public void SetItemHeapIndex(int item, int newIndex)
-        {
-            nodes[item].HeapIndex = newIndex;
         }
     }
 
@@ -153,6 +179,11 @@ namespace Astar
         }
 
         public int FCost => GCost + HCost;
+
+        public HeapItem ToHeapItem()
+        {
+            return new HeapItem(Index, FCost, HCost);
+        }
     }
 
     public class PathFinding
@@ -161,7 +192,7 @@ namespace Astar
         readonly int mapSizeX;
         readonly int mapSize;
         readonly IPathFindingMapInfo mapInfo;
-        readonly Heap<int> openSet;
+        readonly Heap<HeapItem> openSet;
         readonly HashSet<int> closedSet;
 
         public PathFinding(IPathFindingMapInfo mapInfo)
@@ -171,8 +202,7 @@ namespace Astar
             mapSize = mapInfo.SizeX * mapInfo.SizeY;
 
             nodes = new Node[mapSize];
-            var heapItems = new HeapItems(nodes);
-            openSet = new Heap<int>(mapSize, heapItems);
+            openSet = new Heap<HeapItem>(mapSize);
             closedSet = new HashSet<int>();
         }
 
@@ -199,22 +229,20 @@ namespace Astar
 
         public List<int> FindPath(int startX, int startY, int targetX, int targetY)
         {
-            int startNode = CoordsToIndex(startX, startY);
-            int targetNode = CoordsToIndex(targetX, targetY);
-
             Clear();
 
-            openSet.Add(startNode);
+            int startNode = CoordsToIndex(startX, startY);
+            int targetNode = CoordsToIndex(targetX, targetY);
+            
+            openSet.Add(nodes[startNode].ToHeapItem());
 
             while (openSet.Count > 0)
             {
                 // Get the cheapest open node.
 //                int nodeIndex = openSet[0];
-                int nodeIndex = openSet.RemoveFirst();
+                int nodeIndex = openSet.RemoveFirst().NodeIndex;
                 Node node = nodes[nodeIndex];
 
-                // TODO openSet.UpdateItem?
-                
                 closedSet.Add(nodeIndex);
 
                 if (nodeIndex == targetNode)
@@ -233,20 +261,20 @@ namespace Astar
                     }
 
                     int newCostToNeighbour = node.GCost + mapInfo.GetCostBetweenNodes(nodeIndex, neighbourIndex);
-                    if (newCostToNeighbour < neighbour.GCost || !openSet.Contains(neighbourIndex))
+                    if (newCostToNeighbour < neighbour.GCost || !openSet.Contains(neighbour.ToHeapItem()))
                     {
                         neighbour.GCost = newCostToNeighbour;
                         neighbour.HCost = mapInfo.GetCostBetweenNodes(neighbourIndex, targetNode);
                         neighbour.ParentIndex = nodeIndex;
                         nodes[neighbourIndex] = neighbour;
 
-                        if (!openSet.Contains(neighbourIndex))
+                        if (!openSet.Contains(neighbour.ToHeapItem()))
                         {
-                            openSet.Add(neighbourIndex);
+                            openSet.Add(neighbour.ToHeapItem());
                         }
                         else 
                         {
-                            openSet.UpdateItem(neighbourIndex);
+                            openSet.UpdateItem(neighbour.ToHeapItem());
                         }
                     }
                 }

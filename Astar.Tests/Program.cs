@@ -7,7 +7,7 @@ namespace Astar.Tests
         public static void Main(string[] args)
         {
             TapasRunner.Create(args)
-                .AddTest<TestPathFinding>()
+//                .AddTest<TestPathFinding>()
                 .AddTest<TestHeap>()
                 .Run();
         }
