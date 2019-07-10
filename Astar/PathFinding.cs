@@ -102,12 +102,12 @@ namespace Astar
         {
             this.nodes = nodes;
         }
-        
+
         public int Compare(int item1, int item2)
         {
             Node node1 = nodes[item1];
             Node node2 = nodes[item2];
-            
+
             int compare = node1.FCost.CompareTo(node2.FCost);
 
             if (compare == 0)
@@ -136,7 +136,7 @@ namespace Astar
 
         public int GCost;
         public int HCost;
-        
+
         public int FCost => GCost + HCost;
     }
 
@@ -226,7 +226,7 @@ namespace Astar
                         {
                             openSet.Add(neighbourIndex);
                         }
-                        else 
+                        else
                         {
                             openSet.UpdateItem(neighbourIndex);
                         }
