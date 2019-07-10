@@ -31,7 +31,7 @@ namespace Astar
 
         public T RemoveFirst() {
             T firstItem = items[0];
-            currentItemCount--;
+            currentItemCount--; // items[currentItemCount] = 0 ?
             items[0] = items[currentItemCount];
             heapItems.SetItemHeapIndex(items[0], 0);
             //items[0].HeapIndex = 0;
@@ -108,6 +108,7 @@ namespace Astar
                     break;
                 }
 
+                itemIndex = heapItems.GetItemHeapIndex(item);
                 parentIndex = (itemIndex-1)/2;
             }
         }

@@ -56,7 +56,7 @@ namespace Astar
 
         public List<int> GetWalkableNeighbours(int cellIndex)
         {
-            List<int> neighbours = new List<int>(8);
+            List<int> neighbours = new List<int>(8); // TODO: Pass this in parameter.
             Vector2Int cellCoords = MapUtils.IndexToCoords(cellIndex, sizeX);
 
             for (int i = -1; i <= 1; i++)
@@ -222,7 +222,8 @@ namespace Astar
                     return RetracePath(startNode, targetNode);
                 }
 
-                foreach (int neighbourIndex in mapInfo.GetWalkableNeighbours(nodeIndex))
+                var neighbours = mapInfo.GetWalkableNeighbours(nodeIndex);
+                foreach (int neighbourIndex in neighbours)
                 {
                     Node neighbour = nodes[neighbourIndex];
 
