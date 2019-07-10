@@ -7,8 +7,8 @@ namespace Astar
     public class Heap<T> {
         T[] items;
         int currentItemCount;
-       // private IComparer<T> comparer;
-       IHeapItems<T> heapItems;
+        // private IComparer<T> comparer;
+        IHeapItems<T> heapItems;
 	
         public Heap(int maxHeapSize, IHeapItems<T> heapItems)
         {
@@ -44,6 +44,7 @@ namespace Astar
             
             // NOTE: If we want to use the heap with items that can have priority reduced, we have to
             // add `SortDown(item)`.
+            // We can add a boolean passed to the constructor to disable the sort down.
         }
 
         public int Count {
