@@ -9,7 +9,7 @@ namespace Astar
     {
         int SizeX { get; }
         int SizeY { get; }
-        List<int> GetWalkableNeighbours(int cellIndex);
+        void GetWalkableNeighbours(int cellIndex, List<int> resultNeighbours);
         int GetCostBetweenNodes(int nodeIndex1, int nodeIndex2);
     }
 
@@ -54,9 +54,9 @@ namespace Astar
             get { return sizeY;  }
         }
 
-        public List<int> GetWalkableNeighbours(int cellIndex)
+        public void GetWalkableNeighbours(int cellIndex, List<int> resultNeighbours)
         {
-            List<int> neighbours = new List<int>(8); // TODO: Pass this in parameter.
+            resultNeighbours.Clear();
             Vector2Int cellCoords = MapUtils.IndexToCoords(cellIndex, sizeX);
 
             for (int i = -1; i <= 1; i++)
@@ -75,13 +75,11 @@ namespace Astar
 
                         if (isWalkable[neighbourIndex])
                         {
-                            neighbours.Add(neighbourIndex);
+                            resultNeighbours.Add(neighbourIndex);
                         }
                     }
                 }
             }
-
-            return neighbours;
         }
 
         public int GetCostBetweenNodes(int nodeIndex1, int nodeIndex2)
@@ -150,6 +148,7 @@ namespace Astar
         readonly IPathFindingMapInfo mapInfo;
         readonly Heap<int> openSet;
         readonly HashSet<int> closedSet;
+        readonly List<int> neighbours = new List<int>(8);
 
         public PathFinding(IPathFindingMapInfo mapInfo)
         {
@@ -203,7 +202,9 @@ namespace Astar
                     return;
                 }
 
-                var neighbours = mapInfo.GetWalkableNeighbours(nodeIndex);
+                // Put neighbours in the `neighbours` list.
+                mapInfo.GetWalkableNeighbours(nodeIndex, neighbours);
+
                 foreach (int neighbourIndex in neighbours)
                 {
                     Node neighbour = nodes[neighbourIndex];
