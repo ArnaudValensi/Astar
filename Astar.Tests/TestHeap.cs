@@ -71,7 +71,6 @@ namespace Astar.Tests
             Assert.Equal(5, items[5]);
 
 //            heap.UpdateItem(neighbourIndex);
-//            heap.RemoveFirst();
         }
         
         [Test]
@@ -113,6 +112,29 @@ namespace Astar.Tests
             Assert.Equal(true, heap.Contains(0));
             Assert.Equal(true, heap.Contains(5));
             Assert.Equal(false, heap.Contains(6));
+        }
+        
+        [Test]
+        public void Add_remove_first()
+        {
+            var heapItems = new HeapItems();
+            var heap = new Heap<int>(16, heapItems);
+            
+            heap.Add(5);
+            heap.Add(4);
+            heap.Add(3);
+            heap.Add(2);
+            heap.Add(1);
+            heap.Add(0);
+
+            var items = (int[])typeof(Heap<int>).GetField("items", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(heap);
+        
+            Assert.Equal(0, heap.RemoveFirst());
+            Assert.Equal(1, heap.RemoveFirst());
+            Assert.Equal(2, heap.RemoveFirst());
+            Assert.Equal(3, heap.RemoveFirst());
+            Assert.Equal(4, heap.RemoveFirst());
+            Assert.Equal(5, heap.RemoveFirst());
         }
     }
 }
