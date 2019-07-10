@@ -1,20 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using BigSeed.Math;
 
 namespace Astar
 {
-    public struct Vector2Int
-    {
-        public readonly int X;
-        public readonly int Y;
-
-        public Vector2Int(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-    }
-
     public static class MapUtils
     {
         public static int CoordsToIndex(int x, int y, int sizeX)
@@ -88,6 +77,18 @@ namespace Astar
             }
 
             return neighbours;
+        }
+
+        public int GetCostBetweenNodes(int nodeIndex1, int nodeIndex2)
+        {
+            Vector2Int positionA = MapUtils.IndexToCoords(nodeIndex1, sizeX);
+            Vector2Int positionB = MapUtils.IndexToCoords(nodeIndex2, sizeX);
+            int dstX = Math.Abs(positionA.X - positionB.X);
+            int dstY = Math.Abs(positionA.Y - positionB.Y);
+
+            if (dstX > dstY)
+                return 14 * dstY + 10 * (dstX - dstY);
+            return 14 * dstX + 10 * (dstY - dstX);
         }
     }
 
@@ -185,11 +186,11 @@ namespace Astar
                         continue;
                     }
 
-                    int newCostToNeighbour = node.GCost + GetCostBetweenNodes(nodeIndex, neighbourIndex);
+                    int newCostToNeighbour = node.GCost + pathMapLayer.GetCostBetweenNodes(nodeIndex, neighbourIndex);
                     if (newCostToNeighbour < neighbour.GCost || !openSet.Contains(neighbourIndex))
                     {
                         neighbour.GCost = newCostToNeighbour;
-                        neighbour.HCost = GetCostBetweenNodes(neighbourIndex, targetNode);
+                        neighbour.HCost = pathMapLayer.GetCostBetweenNodes(neighbourIndex, targetNode);
                         neighbour.ParentIndex = nodeIndex;
                         nodes[neighbourIndex] = neighbour;
 
@@ -216,19 +217,6 @@ namespace Astar
 
             return path;
 
-        }
-
-        // TODO: This should end up in PathMapLayer.
-        int GetCostBetweenNodes(int nodeA, int nodeB)
-        {
-            Vector2Int positionA = IndexToCoords(nodeA);
-            Vector2Int positionB = IndexToCoords(nodeB);
-            int dstX = Math.Abs(positionA.X - positionB.X);
-            int dstY = Math.Abs(positionA.Y - positionB.Y);
-
-            if (dstX > dstY)
-                return 14 * dstY + 10 * (dstX - dstY);
-            return 14 * dstX + 10 * (dstY - dstX);
         }
     }
 }
