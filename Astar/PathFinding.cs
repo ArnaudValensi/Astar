@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using BigSeed.Math;
-using BigSeed.Utils;
+using Astar.Internal;
+using AStar.Internal;
 
 namespace Astar
 {

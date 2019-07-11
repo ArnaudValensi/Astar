@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using BigSeed.Math;
-using BigSeed.Utils;
 
 namespace Astar.Benchmarks
 {
@@ -38,47 +33,11 @@ namespace Astar.Benchmarks
             
             pathfinding = new PathFinding(mapInfo);
         }
-        
-        string MapToString(int sizeX, int sizeY, int startX, int startY, int endX, int endY, List<int> cellIndexes, DefaultMapInfo pathMapLayer)
-        {
-            StringBuilder[] map = new StringBuilder[sizeY];
-
-            for (int i = 0; i < sizeY; i++)
-            {
-                map[i] = new StringBuilder(new String('_', sizeX));
-            }
-
-            for (int x = 0; x < sizeX; x++)
-            {
-                for (int y = 0; y < sizeY; y++)
-                {
-                    if (!pathMapLayer.IsWalkable(x, y))
-                    {
-                        map[y][x] = 'o';
-                    }
-                }
-            }
-
-            foreach (var cellIndexe in cellIndexes)
-            {
-                Vector2Int position = MapUtils.IndexToCoords(cellIndexe, sizeX);
-
-                map[position.Y][position.X] = '#';
-            }
-
-            map[startY][startX] = 'S';
-            map[endY][endX] = 'E';
-
-            return String.Join("\n", map.Select(sb => sb.ToString()));
-        }
 
         [Benchmark]
         public List<int> SystemDiagnostic()
         {
             pathfinding.FindPath(startX, startY, endX, endY, path);
-            
-//            string result = MapToString(sizeX, sizeY, startX, startY, endX, endY, path, mapInfo);
-//            Console.WriteLine(result);
 
             return path;
         }

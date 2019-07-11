@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BigSeed.Math;
-using BigSeed.Utils;
+using AStar.Internal;
 using Tapas;
 
 namespace Astar.Tests

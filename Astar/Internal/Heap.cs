@@ -3,9 +3,9 @@
 // https://www.youtube.com/watch?v=3Dw5d7PlcTM
 // https://youtu.be/t0Cq6tVNRBA
 
-namespace Astar
+namespace Astar.Internal
 {
-    public class Heap<T> {
+    internal class Heap<T> {
         readonly T[] items;
         int currentItemCount;
         readonly IHeapItems<T> heapItems;

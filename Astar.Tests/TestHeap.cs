@@ -1,4 +1,5 @@
 using System.Reflection;
+using Astar.Internal;
 using Tapas;
 
 namespace Astar.Tests

@@ -1,6 +1,6 @@
-namespace BigSeed.Math
+namespace AStar.Internal
 {
-    public struct Vector2Int
+    internal struct Vector2Int
     {
         public readonly int X;
         public readonly int Y;

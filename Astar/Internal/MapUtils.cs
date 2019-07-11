@@ -1,8 +1,6 @@
-using BigSeed.Math;
-
-namespace BigSeed.Utils
+namespace AStar.Internal
 {
-    public static class MapUtils
+    internal static class MapUtils
     {
         public static int CoordsToIndex(int x, int y, int sizeX)
         {

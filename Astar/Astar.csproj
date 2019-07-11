@@ -27,11 +27,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Heap.cs" />
-    <Compile Include="MapUtils.cs" />
+    <Compile Include="Internal\Heap.cs" />
+    <Compile Include="Internal\MapUtils.cs" />
+    <Compile Include="Internal\Vector2Int.cs" />
     <Compile Include="PathFinding.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Vector2Int.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>
