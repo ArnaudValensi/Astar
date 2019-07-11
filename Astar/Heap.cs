@@ -6,9 +6,9 @@
 namespace Astar
 {
     public class Heap<T> {
-        T[] items;
+        readonly T[] items;
         int currentItemCount;
-        IHeapItems<T> heapItems;
+        readonly IHeapItems<T> heapItems;
 	
         public Heap(int maxHeapSize, IHeapItems<T> heapItems)
         {
