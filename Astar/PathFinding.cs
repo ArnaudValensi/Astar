@@ -97,7 +97,7 @@ namespace Astar
 
     public class HeapItems : IHeapItems<int>
     {
-        private Node[] nodes;
+        Node[] nodes;
         public HeapItems(Node[] nodes)
         {
             this.nodes = nodes;
